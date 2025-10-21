@@ -2,8 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { AppDataProvider } from './DataContext'; // fixed import
-import { styles } from './global';
+import { AppDataProvider } from './DataContext'; 
+import { createStackNavigator } from '@react-navigation/stack';
 
 // Screens
 import HomeScreen from './Screens/HomeScreen';
@@ -24,7 +24,6 @@ import DessertScreen from './Screens/Menu/DessertScreen';
 import SpecialsScreen from './Screens/Menu/SpecialsScreen';
 
 // Tab and Stack navigators
-import { createStackNavigator } from '@react-navigation/stack';
 const Tab = createBottomTabNavigator();
 const DrinksStack = createStackNavigator();
 const MenuStack = createStackNavigator();

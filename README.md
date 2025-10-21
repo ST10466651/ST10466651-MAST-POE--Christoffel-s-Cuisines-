@@ -1,13 +1,91 @@
-> Why do I have a folder named ".expo" in my project?
+Christoffel's Cuisines
 
-The ".expo" folder is created when an Expo project is started using "expo start" command.
+Description
 
-> What do the files contain?
+Christoffel’s Cuisines is a modern, interactive food menu and ordering application built for restaurants to manage their dishes efficiently. The platform allows staff to update meal descriptions, prices, and categories with ease, ensuring customers always have access to accurate menu information.
 
-- "devices.json": contains information about devices that have recently opened this project. This is used to populate the "Development sessions" list in your development builds.
-- "settings.json": contains the server configuration that is used to serve the application manifest.
+Features
 
-> Should I commit the ".expo" folder?
+Fully dynamic menu with categories (Breakfast, Lunch, Dinner, Drinks, etc.)
 
-No, you should not share the ".expo" folder. It does not contain any information that is relevant for other developers working on the project, it is specific to your machine.
-Upon project creation, the ".expo" folder is already added to your ".gitignore" file.
+Edit meal descriptions and prices in real-time
+
+Filter meals by name and meal type
+
+Smooth navigation between main menu and subpages
+
+Responsive layout for mobile and desktop usage
+
+Clean, semi-professional dark theme design
+
+Installation
+
+Clone the repository:
+
+git clone https://github.com/yourusername/christoffels-cuisines.git
+
+
+Navigate to the project folder:
+
+cd christoffels-cuisines
+
+
+Install dependencies:
+
+npm install
+
+
+Run the application:
+
+npm start
+
+
+Open in your preferred browser or use Expo Go for mobile testing.
+
+Usage
+
+Navigate through the menu categories using the bottom navigation bar.
+
+Click on a meal to update its description or price.
+
+Only meals that match both the name and meal type will be updated.
+
+Subpages hide the main navigation for a cleaner interface; use the back button to return.
+
+Technologies Used
+
+React Native – For building the app interface
+
+TypeScript – Strongly typed code for safer updates
+
+Expo – Simplified mobile testing and deployment
+
+React Navigation – For smooth navigation between pages
+
+How It Works
+
+Menu items are stored in an array grouped by meal type.
+
+When a user updates a meal, the app searches for matching name and meal type.
+
+Only the description and price are updated; other details remain untouched.
+
+Changes reflect immediately across the app due to dynamic state handling.
+
+Contributing
+
+Contributions are welcome!
+
+Fork the repository
+
+Create a new branch for your feature (git checkout -b feature-name)
+
+Make your changes and commit (git commit -m "Add feature")
+
+Push to your branch (git push origin feature-name)
+
+Open a pull request
+
+License
+
+MIT License – feel free to use, modify, and distribute this project.
