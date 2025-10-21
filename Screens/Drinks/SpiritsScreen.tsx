@@ -4,36 +4,38 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { DrinksStackParamList } from './DrinksStackScreen';
 import {styles } from '../../global';
+import { useData } from '../../DataContext';
+import { wines } from '../../constants';
+
+
 
 type SpiritsScreenNavigationProp = StackNavigationProp<DrinksStackParamList, 'Spirits'>;
 
-const menuItems = [
-  { name: 'Red Wine', desc: 'Cabernet Sauvignon, full-bodied', price: 'R120' },
-  { name: 'White Wine', desc: 'Chardonnay, crisp and fresh', price: 'R110' },
-];
 
 export default function SpiritsScreen() {
   const navigation = useNavigation<SpiritsScreenNavigationProp>();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Spirits</Text>
-
-      <FlatList
-        data={menuItems}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <View style={styles.menuItem}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemDesc}>{item.desc}</Text>
-            <Text style={styles.itemPrice}>{item.price}</Text>
-          </View>
-        )}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>Back</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
-  );
+  <SafeAreaView style={styles.container}>
+    <Text style={styles.title}>WINE</Text>
+    <View style={styles.drinksBox}>
+    <FlatList
+      data={wines}
+      keyExtractor={(item) => item.name}
+      renderItem={({ item }) => (
+      <View style={styles.mainitem}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.itemName}>- {item.name}</Text>
+        <Text style={styles.itemDesc}>{item.desc}</Text>
+      </View>
+        <Text style={styles.itemPrice}>{item.price}</Text>
+      </View>
+      )}
+    />
+      </View> 
+    <TouchableOpacity style={styles.subbutton} onPress={() => navigation.goBack()}> 
+      <Text style={styles.buttonText}>Back</Text> 
+    </TouchableOpacity> 
+  </SafeAreaView> 
+);
 }

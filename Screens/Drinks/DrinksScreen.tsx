@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { DrinksStackParamList } from './DrinksStackScreen';
 import { styles } from '../../global';
+import { useData } from '../../DataContext';
+
 
 import WineImg from '../../images/wine.png';
 import CocktailsImg from '../../images/cocktails.png';
@@ -13,12 +15,11 @@ import BeveragesImg from '../../images/beverages.png';
 type DrinksScreenNavigationProp = StackNavigationProp<DrinksStackParamList, 'DrinksMain'>;
 
 const drinks = [
-  { name: 'Wine', image: WineImg, screen: 'Wine' },
-  { name: 'Cocktails', image: CocktailsImg, screen: 'Cocktails' },
-  { name: 'Spirits', image: SpiritsImg, screen: 'Spirits' },
-  { name: 'Beverages', image: BeveragesImg, screen: 'Beverages' },
+  { name: 'WINE', image: WineImg, screen: 'Wine' },
+  { name: 'COCKTAILS', image: CocktailsImg, screen: 'Cocktails' },
+  { name: 'SPIRITS', image: SpiritsImg, screen: 'Spirits' },
+  { name: 'BEVERAGES', image: BeveragesImg, screen: 'Beverages' },
 ];
-
 
 export default function DrinksScreen() {
   const navigation = useNavigation<DrinksScreenNavigationProp>();
@@ -27,16 +28,16 @@ export default function DrinksScreen() {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>DRINKS</Text>
 
-      <View style={styles.grid}>
-        {drinks.map((drink) => (
-          <View key={drink.name} style={styles.item}>
-            <Text style={styles.label}>{drink.name}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate(drink.screen as keyof DrinksStackParamList)}>
-            <Image source={drink.image} style={styles.image} />
-          </TouchableOpacity>
-          </View>
-        ))}
-      </View>
+        <View style={styles.grid}>
+          {drinks.map((drink) => (
+            <View key={drink.name} style={styles.item}>
+              <Text style={styles.label}>{drink.name}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate(drink.screen as keyof DrinksStackParamList)}>
+              <Image source={drink.image} style={styles.image} />
+            </TouchableOpacity>
+            </View>
+          ))}
+        </View>   
     </SafeAreaView>
   );
 }

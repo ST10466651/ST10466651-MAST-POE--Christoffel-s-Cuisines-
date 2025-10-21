@@ -5,6 +5,9 @@ import WineScreen from './WineScreen';
 import CocktailsScreen from './CocktailsScreen';
 import SpiritsScreen from './SpiritsScreen';
 import BeveragesScreen from './BeveragesScreen';
+import { useData } from '../../DataContext';
+
+
 
 export type DrinksStackParamList = {
   DrinksMain: undefined;
