@@ -1,129 +1,154 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useContext } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import { AppDataContext } from '../DataContext';
 import { styles } from '../global';
-import { menuItems } from './HomeScreen';
-import { useData } from '../DataContext';
 
+type MenuItem = {
+  name: string;
+  desc: string;
+  price: string;
+};
 
 export default function EditMenuScreen() {
+  const { food, setFood } = useContext(AppDataContext);
+
   const [mealName, setMealName] = useState('');
-  const [mealType, setMealType] = useState('');
+  const [mealType, setMealType] = useState(''); // Text input now
   const [mealDesc, setMealDesc] = useState('');
   const [mealPrice, setMealPrice] = useState('');
 
-  const allowedTypes = ['Starter', 'Main', 'Dessert', 'Special'];
-
-  const existingMenu =  menuItems;
-
-  const [errors, setErrors] = useState({
-    mealName: '',
-    mealType: '',
-    mealDesc: '',
-    mealPrice: '',
-  });
-
-const validate = () => {
-    let valid = true;
-    const newErrors = { mealName: '', mealType: '', mealDesc: '', mealPrice: '' };
-
-    // Meal Name
-    if (!mealName.trim()) {
-      newErrors.mealName = 'Meal name is required';
-      valid = false;
-    } else if (mealName.trim().length > 25) {
-      newErrors.mealName = 'Meal name cannot exceed 25 characters';
-      valid = false;
-    } else if (existingMenu.some(item => item.name.toLowerCase() === mealName.trim().toLowerCase())) {
-      newErrors.mealName = 'Meal name already exists';
-      valid = false;
-    }
-
-    // Meal Type
-    if (!mealType.trim()) {
-      newErrors.mealType = 'Meal type is required';
-      valid = false;
-    } else if (!allowedTypes.includes(mealType.trim())) {
-      newErrors.mealType = `Must be one of: ${allowedTypes.join(', ')}`;
-      valid = false;
-    }
-
-    // Meal Description
-    if (!mealDesc.trim()) {
-      newErrors.mealDesc = 'Description is required';
-      valid = false;
-    } else if (mealDesc.trim().length < 10) {
-      newErrors.mealDesc = 'Description must be at least 10 characters';
-      valid = false;
-    } else if (mealDesc.trim().length > 250) {
-      newErrors.mealDesc = 'Description cannot exceed 250 characters';
-      valid = false;
-    }
-
-    // Price
-    const priceNum = parseInt(mealPrice, 10);
-    if (!mealPrice.trim()) {
-      newErrors.mealPrice = 'Price is required';
-      valid = false;
-    } else if (isNaN(priceNum) || priceNum <= 0) {
-      newErrors.mealPrice = 'Price must be a positive number';
-      valid = false;
-    } else if (mealPrice.length > 3) {
-      newErrors.mealPrice = 'Price can only be 3 digits';
-      valid = false;
-    } else if (mealPrice.includes(',') || mealPrice.includes('.')) {
-      newErrors.mealPrice = "Don't include commas or periods";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  const handleEdit = () => {
-    if (!validate()) return; // Stop if validation fails
-
-    const formattedPrice = `${parseInt(mealPrice, 10)},00`;
-    Alert.alert(
-      'Menu Updated',
-      `Meal: ${mealName}\nType: ${mealType}\nDescription: ${mealDesc}\nPrice: R${formattedPrice}`
-    );
-
-    // Optionally reset fields after edit
+  const resetForm = () => {
     setMealName('');
     setMealType('');
     setMealDesc('');
     setMealPrice('');
-    setErrors({ mealName: '', mealType: '', mealDesc: '', mealPrice: '' });
+  };
+
+  const handleAddToMenu = () => {
+    if (!mealName || !mealType || !mealDesc || !mealPrice) {
+      Alert.alert('Error', 'Please fill all fields.');
+      return;
+    }
+
+    const validMealTypes = ['starters', 'mains', 'dessert', 'specials'];
+    const typeKey = mealType.trim().toLowerCase();
+
+    if (!validMealTypes.includes(typeKey)) {
+      Alert.alert(
+        'Error',
+        'Invalid meal type. Use: starters, mains, desserts, specials.'
+      );
+      return;
+    }
+
+    const newMeal: MenuItem = {
+      name: mealName.trim(),
+      desc: mealDesc.trim(),
+      price: mealPrice.trim(),
+    };
+
+    setFood({
+      ...food,
+      [typeKey]: [...(food[typeKey] || []), newMeal],
+    });
+
+    Alert.alert('Success', `${typeKey.toUpperCase()} added!`);
+    resetForm();
+  };
+
+  const handleEditMenu = () => {
+    if (!mealName || !mealType || !mealDesc || !mealPrice) {
+      Alert.alert('Error', 'Please fill all fields.');
+      return;
+    }
+
+    const typeKey = mealType.trim().toLowerCase();
+    const updatedArray: MenuItem[] = (food[typeKey] || []).map(
+      (item: MenuItem) =>
+        item.name === mealName
+          ? { ...item, desc: mealDesc.trim(), price: mealPrice.trim() }
+          : item
+    );
+
+    // If meal not found
+    if (!updatedArray.find((item: MenuItem) => item.name === mealName)) {
+      Alert.alert(
+        'Error',
+        `${mealType.toUpperCase()} not found. Use Add to Menu instead.`
+      );
+      return;
+    }
+
+    setFood({
+      ...food,
+      [typeKey]: updatedArray,
+    });
+
+    Alert.alert('Success', `${typeKey.toUpperCase()} edited!`);
+    resetForm();
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>EDIT MENU</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>EDIT MENU</Text>
+        <View style={styles.editmenuBox}>
+          <View style={styles.form}>
+            <Text style={styles.label}>MEAL NAME:</Text>
+            <TextInput
+              style={styles.input}
+              value={mealName}
+              onChangeText={(text) => {
+                const capitalized = text
+                  .split(' ')
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                  .join(' ');
+                setMealName(capitalized);
+              }}
+            />
 
+            <Text style={styles.label}>MEAL TYPE:</Text>
+            <TextInput
+              style={styles.input}
+              value={mealType}
+              onChangeText={setMealType}
+              placeholder="starters / mains / desserts / specials"
+            />
 
-      <View style={styles.editmenuBox}>
-        <View style={styles.form}>
-          <Text style={styles.label}>MEAL NAME:</Text>
-          <TextInput style={styles.input} value={mealName} onChangeText={setMealName} />
-          {errors.mealName ? <Text style={styles.error}>{errors.mealName}</Text> : null}
+            <Text style={styles.label}>MEAL DESCRIPTION:</Text>
+            <TextInput
+              style={styles.input}
+              value={mealDesc}
+              onChangeText={setMealDesc}
+            />
 
-          <Text style={styles.label}>MEAL TYPE:</Text>
-          <TextInput style={styles.input} value={mealType} onChangeText={setMealType} />
-          {errors.mealType ? <Text style={styles.error}>{errors.mealType}</Text> : null}
+            <Text style={styles.label}>PRICE:</Text>
+            <TextInput
+              style={styles.input}
+              value={mealPrice}
+              onChangeText={setMealPrice}
+              keyboardType="numeric"
+            />
+          </View>
 
-          <Text style={styles.label}>DESCRIPTION:</Text>
-          <TextInput style={styles.input} value={mealDesc} onChangeText={setMealDesc} multiline/>
-          {errors.mealDesc ? <Text style={styles.error}>{errors.mealDesc}</Text> : null}
+          <TouchableOpacity style={styles.button} onPress={handleEditMenu}>
+            <Text style={styles.buttonText}>EDIT MENU</Text>
+          </TouchableOpacity>
 
-          <Text style={styles.label}>PRICE:</Text>
-          <TextInput style={styles.input} value={mealPrice} onChangeText={setMealPrice} keyboardType="numeric" maxLength={3} />
-          {errors.mealPrice ? <Text style={styles.error}>{errors.mealPrice}</Text> : null}
+          <TouchableOpacity style={styles.addButton} onPress={handleAddToMenu}>
+            <Text style={styles.buttonText}>ADD TO MENU</Text>
+          </TouchableOpacity>
         </View>
-        
-        <TouchableOpacity style={styles.button} onPress={handleEdit}>
-          <Text style={styles.buttonText}>EDIT MENU</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

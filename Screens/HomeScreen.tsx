@@ -2,15 +2,32 @@ import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaView, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from '../global';
 import { AppDataContext } from '../DataContext';
+import { drinks } from '../constants';
 
 export default function HomeScreen() {
-  const { menuItems, populateAll, clearAll } = useContext(AppDataContext); // fixed: useContext instead of useData
-  const [itemCount, setItemCount] = useState(menuItems.length);
+  const { food, populateAll, clearAll, viewAll } = useContext(AppDataContext);
 
-  // Update count in real-time if menuItems changes
+  // Combined array of all meals
+  const [allItems, setAllItems] = useState<any[]>([]);
+
   useEffect(() => {
-    setItemCount(menuItems.length);
-  }, [menuItems]); // add menuItems as dependency
+    if (viewAll) {
+      // Combine all food categories dynamically
+      const combined: any[] = [
+        ...(food.starters || []),
+        ...(food.mains || []),
+        ...(food.desserts || []),
+        ...(food.specials || []),
+        ...drinks.wines,
+        ...drinks.spirits,
+        ...drinks.cocktails,
+        ...drinks.beverages,
+      ];
+      setAllItems(combined);
+    } else {
+      setAllItems([]);
+    }
+  }, [food, viewAll]); // 🔹 Updates whenever food changes
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,8 +35,8 @@ export default function HomeScreen() {
 
       <View style={styles.menuBox}>
         <FlatList
-          data={menuItems}
-          keyExtractor={(item) => item.name}
+          data={allItems}
+          keyExtractor={(item) => item.name + Math.random()} // Avoid duplicate keys
           renderItem={({ item }) => (
             <View style={styles.mainitem}>
               <View style={{ flex: 1 }}>
@@ -43,7 +60,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.counter}>Items: {itemCount}</Text>
+      <Text style={styles.counter}>Items: {allItems.length}</Text>
     </SafeAreaView>
   );
 }

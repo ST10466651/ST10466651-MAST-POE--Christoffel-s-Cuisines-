@@ -1,36 +1,87 @@
 import React, { createContext, useState, ReactNode } from 'react';
-import { menuItems as defaultMenuItems, wines } from './constants'; // rename import to avoid conflict
+import { menuItems, drinks as drinksConst, food as foodConst } from './constants';
 
 type AppDataContextType = {
   menuItems: any[];
-  drinks: any[];
+  drinks: any;
+  food: any;
+  viewAll: boolean;
   populateAll: () => void;
   clearAll: () => void;
+  populateMenu: () => void;
+  clearMenu: () => void;
+  setMenuItems: React.Dispatch<React.SetStateAction<any[]>>;
+  setDrinks: React.Dispatch<React.SetStateAction<any>>;
+  setFood: React.Dispatch<React.SetStateAction<any>>;
+  setViewAll: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AppDataContext = createContext<AppDataContextType>({
   menuItems: [],
-  drinks: [],
+  drinks: {},
+  food: {},
+  viewAll: false,
   populateAll: () => {},
   clearAll: () => {},
+  populateMenu: () => {},
+  clearMenu: () => {},
+  setMenuItems: () => {},
+  setDrinks: () => {},
+  setFood: () => {},
+  setViewAll: () => {},
 });
 
 export const AppDataProvider = ({ children }: { children: ReactNode }) => {
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [drinks, setDrinks] = useState<any[]>([]);
+  const [menuItemsState, setMenuItems] = useState<any[]>([]);
+  const [drinksState, setDrinks] = useState(drinksConst);
+  const [foodState, setFood] = useState(foodConst);
+  const [viewAll, setViewAll] = useState(false);
 
+  // Populate everything including viewAll
   const populateAll = () => {
-    setMenuItems(defaultMenuItems); // use imported menuItems
-    setDrinks(wines);
+    setMenuItems(menuItems);
+    setDrinks(drinksConst);
+    setFood(foodConst);
+    setViewAll(true);
   };
 
+  // Clear everything including viewAll
   const clearAll = () => {
     setMenuItems([]);
-    setDrinks([]);
+    setFood({ starters: [], mains: [], desserts: [], specials: [] });
+    setViewAll(false);
+  };
+
+  // Only affect menu items/screens
+  const populateMenu = () => {
+    setFood(foodConst);
+    setDrinks(drinksConst);
+    setViewAll(true);
+  };
+
+  const clearMenu = () => {
+    setMenuItems([]);
+    setFood({ starters: [], mains: [], desserts: [], specials: [] });
+    setViewAll(false);
   };
 
   return (
-    <AppDataContext.Provider value={{ menuItems, drinks, populateAll, clearAll }}>
+    <AppDataContext.Provider
+      value={{
+        menuItems: menuItemsState,
+        drinks: drinksState,
+        food: foodState,
+        viewAll,
+        populateAll,
+        clearAll,
+        populateMenu,
+        clearMenu,
+        setMenuItems,
+        setDrinks,
+        setFood,
+        setViewAll,
+      }}
+    >
       {children}
     </AppDataContext.Provider>
   );

@@ -189,7 +189,27 @@ popupText: {
   shadowRadius: 4,
   elevation: 5,
 },
+pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginVertical: 8,
+    overflow: 'hidden', // ensures dropdown doesn’t exceed boundaries
+    backgroundColor: '#fff',
+  },
 
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  addButton: {
+    backgroundColor: "#8d8d8dff", 
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    borderRadius: 25,
+    marginTop: 12,
+    alignSelf: 'center',
+  },    
   button: {
     alignSelf: 'center',
     backgroundColor: "#8d8d8dff",
@@ -225,7 +245,7 @@ popupText: {
   },
   navBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     backgroundColor: '#d9d7d8',
     paddingVertical: 7,
     borderTopWidth: 1,
