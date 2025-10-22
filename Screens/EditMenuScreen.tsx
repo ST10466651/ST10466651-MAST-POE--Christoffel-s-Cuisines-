@@ -18,6 +18,8 @@ type MenuItem = {
   price: string;
 };
 
+type FoodKeys = "starters" | "mains" | "desserts" | "specials";
+
 export default function EditMenuScreen() {
   const { food, setFood } = useContext(AppDataContext);
 
@@ -25,6 +27,8 @@ export default function EditMenuScreen() {
   const [mealType, setMealType] = useState(''); // Text input now
   const [mealDesc, setMealDesc] = useState('');
   const [mealPrice, setMealPrice] = useState('');
+
+  const validMealTypes: FoodKeys[] = ["starters", "mains", "desserts", "specials"];
 
   const resetForm = () => {
     setMealName('');
@@ -35,17 +39,16 @@ export default function EditMenuScreen() {
 
   const handleAddToMenu = () => {
     if (!mealName || !mealType || !mealDesc || !mealPrice) {
-      Alert.alert('Error', 'Please fill all fields.');
+      Alert.alert("Error", "Please fill all fields.");
       return;
     }
 
-    const validMealTypes = ['starters', 'mains', 'dessert', 'specials'];
-    const typeKey = mealType.trim().toLowerCase();
+    const typeKey = mealType.trim().toLowerCase() as FoodKeys;
 
     if (!validMealTypes.includes(typeKey)) {
       Alert.alert(
-        'Error',
-        'Invalid meal type. Use: starters, mains, desserts, specials.'
+        "Error",
+        "Invalid meal type. Use: starters, mains, desserts, specials."
       );
       return;
     }
@@ -58,31 +61,39 @@ export default function EditMenuScreen() {
 
     setFood({
       ...food,
-      [typeKey]: [...(food[typeKey] || []), newMeal],
+      [typeKey]: [...food[typeKey], newMeal],
     });
 
-    Alert.alert('Success', `${typeKey.toUpperCase()} added!`);
+    Alert.alert("Success", `${typeKey.toUpperCase()} added!`);
     resetForm();
   };
 
   const handleEditMenu = () => {
     if (!mealName || !mealType || !mealDesc || !mealPrice) {
-      Alert.alert('Error', 'Please fill all fields.');
+      Alert.alert("Error", "Please fill all fields.");
       return;
     }
 
-    const typeKey = mealType.trim().toLowerCase();
-    const updatedArray: MenuItem[] = (food[typeKey] || []).map(
-      (item: MenuItem) =>
-        item.name === mealName
-          ? { ...item, desc: mealDesc.trim(), price: mealPrice.trim() }
-          : item
+    const typeKey = mealType.trim().toLowerCase() as FoodKeys;
+
+    if (!validMealTypes.includes(typeKey)) {
+      Alert.alert(
+        "Error",
+        "Invalid meal type. Use: starters, mains, desserts, specials."
+      );
+      return;
+    }
+
+    const updatedArray = food[typeKey].map((item) =>
+      item.name === mealName
+        ? { ...item, desc: mealDesc.trim(), price: mealPrice.trim() }
+        : item
     );
 
-    // If meal not found
-    if (!updatedArray.find((item: MenuItem) => item.name === mealName)) {
+    // Check if meal exists
+    if (!updatedArray.find((item) => item.name === mealName)) {
       Alert.alert(
-        'Error',
+        "Error",
         `${mealType.toUpperCase()} not found. Use Add to Menu instead.`
       );
       return;
@@ -93,7 +104,7 @@ export default function EditMenuScreen() {
       [typeKey]: updatedArray,
     });
 
-    Alert.alert('Success', `${typeKey.toUpperCase()} edited!`);
+    Alert.alert("Success", `${typeKey.toUpperCase()} edited!`);
     resetForm();
   };
 
@@ -135,8 +146,14 @@ export default function EditMenuScreen() {
             <TextInput
               style={styles.input}
               value={mealPrice}
-              onChangeText={setMealPrice}
+              onChangeText={(text) => {
+                // Remove any existing R or non-digit characters
+                const numericValue = text.replace(/\D/g, '');
+                // Only set if there is a number
+                setMealPrice(numericValue ? `R${numericValue}` : '');
+              }}
               keyboardType="numeric"
+              placeholder="R0"
             />
           </View>
 
