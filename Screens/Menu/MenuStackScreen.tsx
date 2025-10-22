@@ -5,7 +5,6 @@ import MainScreen from './MainScreen';
 import DessertScreen from './DessertScreen';
 import SpecialsScreen from './SpecialsScreen';
 import MenuScreen from './MenuScreen';
-import { useData } from '../../DataContext';
 
 
 export type MenuStackParamList = {
